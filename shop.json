@@ -7,169 +7,225 @@
    "name": "Chicken Dinner 12kg bag",
    "price": 5999,
    "post": true,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/chicken-dinner-1.webp",
+   "url": "/dog-food/chicken-dinner"
   },
   "chicken-dinner-2kg": {
    "name": "Chicken Dinner 2kg bag",
    "price": 1699,
    "post": false,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/chicken-dinner-1.webp",
+   "url": "/dog-food/chicken-dinner"
   },
   "lamb-hotpot-12kg": {
    "name": "Lamb Hotpot 12kg bag",
    "price": 5999,
    "post": true,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/lamb-hotpot-1.webp",
+   "url": "/dog-food/lamb-hotpot"
   },
   "lamb-hotpot-2kg": {
    "name": "Lamb Hotpot 2kg bag",
    "price": 1699,
    "post": false,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/lamb-hotpot-1.webp",
+   "url": "/dog-food/lamb-hotpot"
   },
   "duck-roast-12kg": {
    "name": "Duck Roast 12kg bag",
    "price": 5999,
    "post": true,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/duck-roast-1.webp",
+   "url": "/dog-food/duck-roast"
   },
   "duck-roast-2kg": {
    "name": "Duck Roast 2kg bag",
    "price": 1699,
    "post": false,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/duck-roast-1.webp",
+   "url": "/dog-food/duck-roast"
   },
   "salmon-supreme-12kg": {
    "name": "Salmon Supreme 12kg bag",
    "price": 5999,
    "post": true,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/salmon-supreme-1.webp",
+   "url": "/dog-food/salmon-supreme"
   },
   "salmon-supreme-2kg": {
    "name": "Salmon Supreme 2kg bag",
    "price": 1699,
    "post": false,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/salmon-supreme-1.webp",
+   "url": "/dog-food/salmon-supreme"
   },
   "big-paws-chicken-dinner-12kg": {
    "name": "Big Paws Chicken Dinner 12kg bag",
    "price": 5999,
    "post": true,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/big-paws-chicken-dinner-1.webp",
+   "url": "/dog-food/big-paws-chicken-dinner"
   },
   "big-paws-chicken-dinner-2kg": {
    "name": "Big Paws Chicken Dinner 2kg bag",
    "price": 1699,
    "post": false,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/big-paws-chicken-dinner-1.webp",
+   "url": "/dog-food/big-paws-chicken-dinner"
   },
   "lite-bite-12kg": {
    "name": "SweetPea's Lite Bite 12kg bag",
    "price": 5999,
    "post": true,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/lite-bite-1.webp",
+   "url": "/dog-food/lite-bite"
   },
   "lite-bite-2kg": {
    "name": "SweetPea's Lite Bite 2kg bag",
    "price": 1699,
    "post": false,
-   "repeat": true
+   "repeat": true,
+   "img": "/img/products/lite-bite-1.webp",
+   "url": "/dog-food/lite-bite"
   },
   "chicken-rabbit-300g": {
    "name": "Chicken & Rabbit With Superfoods 300g tray",
    "price": 265,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/chicken-rabbit-superfoods-1.webp",
+   "url": "/dog-food/chicken-rabbit-superfoods"
   },
   "venison-300g": {
    "name": "Venison With Superfoods 300g tray",
    "price": 265,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/venison-superfoods-1.webp",
+   "url": "/dog-food/venison-superfoods"
   },
   "wild-boar-300g": {
    "name": "Wild Boar With Superfoods 300g tray",
    "price": 265,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/wild-boar-superfoods-1.webp",
+   "url": "/dog-food/wild-boar-superfoods"
   },
   "beef-exotic-300g": {
    "name": "Beef With Exotic Superfoods 300g tray",
    "price": 265,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/beef-exotic-superfoods-1.webp",
+   "url": "/dog-food/beef-exotic-superfoods"
   },
   "chicken-exotic-300g": {
    "name": "Chicken With Exotic Superfoods 300g tray",
    "price": 265,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/chicken-exotic-superfoods-1.webp",
+   "url": "/dog-food/chicken-exotic-superfoods"
   },
   "gf-salmon-ocean-fish-395g": {
    "name": "Grain Free Salmon & Ocean Fish 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/grain-free-salmon-ocean-fish-1.webp",
+   "url": "/dog-food/grain-free-salmon-ocean-fish"
   },
   "gf-chicken-395g": {
    "name": "Grain Free Chicken 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/grain-free-chicken-1.webp",
+   "url": "/dog-food/grain-free-chicken"
   },
   "gf-turkey-395g": {
    "name": "Grain Free Turkey 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/grain-free-turkey-1.webp",
+   "url": "/dog-food/grain-free-turkey"
   },
   "gf-salmon-395g": {
    "name": "Grain Free Salmon 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/grain-free-salmon-1.webp",
+   "url": "/dog-food/grain-free-salmon"
   },
   "gf-lamb-395g": {
    "name": "Grain Free Lamb 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/grain-free-lamb-1.webp",
+   "url": "/dog-food/grain-free-lamb"
   },
   "ede-chicken-tripe-395g": {
    "name": "Every Day Essentials Chicken & Tripe 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/every-day-chicken-tripe-1.webp",
+   "url": "/dog-food/every-day-chicken-tripe"
   },
   "ede-chicken-395g": {
    "name": "Every Day Essentials Chicken 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/every-day-chicken-1.webp",
+   "url": "/dog-food/every-day-chicken"
   },
   "ede-salmon-ocean-fish-395g": {
    "name": "Every Day Essentials Salmon & Ocean Fish 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/every-day-salmon-ocean-fish-1.webp",
+   "url": "/dog-food/every-day-salmon-ocean-fish"
   },
   "ede-lamb-395g": {
    "name": "Every Day Essentials Lamb 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/every-day-lamb-1.webp",
+   "url": "/dog-food/every-day-lamb"
   },
   "ede-duck-395g": {
    "name": "Every Day Essentials Duck 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/every-day-duck-1.webp",
+   "url": "/dog-food/every-day-duck"
   },
   "ede-turkey-395g": {
    "name": "Every Day Essentials Turkey, Brown Rice & Vegetables 395g tray",
    "price": 225,
    "post": false,
-   "repeat": false
+   "repeat": false,
+   "img": "/img/products/every-day-turkey-brown-rice-1.webp",
+   "url": "/dog-food/every-day-turkey-brown-rice"
   }
  },
  "repeat": {

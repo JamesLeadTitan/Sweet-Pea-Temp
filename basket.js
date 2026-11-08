@@ -32,6 +32,8 @@ function add(key) {
 }
 
 function thumb(key) {
+  const p = shop && shop.products[key];
+  if (p && p.img) return p.img;
   const b = document.querySelector('.order[data-key="' + key + '"]');
   const img = b && b.closest('.prod') && b.closest('.prod').querySelector('img.pimg');
   return img ? img.src : '';
