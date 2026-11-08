@@ -429,9 +429,9 @@ footer a:hover{text-decoration:underline}
     <h2>Treats And Chews</h2>
     <p class="lead">Natural chews, meaty treats and the deli pick and mix. Come and browse at HQ or any of our pitches.</p>
     <div class="grid3">
-      <a class="card" href="treats-and-chews.html"><div class="ph">Add Photo</div><div class="ov"></div><div class="cbody"><h3>No Hide Chews</h3><p>Seven natural ingredients, around 80 percent digestible</p></div></a>
-      <a class="card" href="treats-and-chews.html"><div class="ph">Add Photo</div><div class="ov"></div><div class="cbody"><h3>Bangers</h3><p>One of our top sellers. 100 percent meat, gluten and grain free</p></div></a>
-      <a class="card" href="treats-and-chews.html"><div class="ph">Add Photo</div><div class="ov"></div><div class="cbody"><h3>Deli Pick And Mix</h3><p>Build your own bag and let them pick a favourite</p></div></a>
+      <a class="card" href="treats-and-chews.html"><div class="ov"></div><div class="cbody"><h3>No Hide Chews</h3><p>Seven natural ingredients, around 80 percent digestible</p></div></a>
+      <a class="card" href="treats-and-chews.html"><div class="ov"></div><div class="cbody"><h3>Bangers</h3><p>One of our top sellers. 100 percent meat, gluten and grain free</p></div></a>
+      <a class="card" href="treats-and-chews.html"><div class="ov"></div><div class="cbody"><h3>Deli Pick And Mix</h3><p>Build your own bag and let them pick a favourite</p></div></a>
     </div>
     <div class="mt center"><a class="btn btn-alt" href="treats-and-chews.html">See All Treats And Chews</a></div>
   </div>
@@ -465,8 +465,7 @@ footer a:hover{text-decoration:underline}
 </section>
 
 <section class="section bg-white" id="harness">
-  <div class="container grid2">
-    <div class="ph pic">Harness Fitting Photo</div>
+  <div class="container" style="max-width:860px">
     <div>
       <span class="label">Fitted By Us</span>
       <h2>Perfect Fit Harnesses</h2>
@@ -501,16 +500,6 @@ footer a:hover{text-decoration:underline}
   </div>
 </section>
 
-<section class="section bg-white" id="reviews">
-  <div class="container">
-    <span class="label">What Customers Say</span>
-    <h2>Reviews</h2>
-    <div class="mt">
-      <script type='text/javascript' src='https://reputationhub.site/reputation/assets/review-widget.js'></script><iframe class='lc_reviews_widget' src='https://reputationhub.site/reputation/widgets/review_widget/3RNiJXKKi66ucQMTdWcG' frameborder='0' scrolling='no' style='min-width: 100%; width: 100%;'></iframe>
-      <p style="font-size:1rem;color:var(--text-muted);margin-top:10px">Example - live review feed from one of our clients</p>
-    </div>
-  </div>
-</section>
 
 <section class="section " id="faq">
   <div class="container faq-wrap">
@@ -578,6 +567,7 @@ function spDay(d){
   SP.monthly.forEach(function(m){var ok=false;
     if(m.rule==='second-friday')ok=(dow===5&&date>=8&&date<=14);
     if(m.rule==='last-friday')ok=(dow===5&&date+7>dim);
+    if(m.n!=null&&m.dow===dow)ok=m.n===-1?date+7>dim:Math.ceil(date/7)===m.n;
     if(ok&&!out.some(function(o){return o.loc===m.loc}))out.push({loc:m.loc,from:m.from,to:m.to})});
   SP.events.forEach(function(e){if(e.date===key)out.push({loc:e.loc,name:e.name,addr:e.addr,from:e.from,to:e.to,note:e.note,lat:e.lat,lng:e.lng,ev:1})});
   SP.changes.forEach(function(c){if(c.date!==key)return;out.forEach(function(o){if(o.loc===c.loc){if(c.closed)o.closed=1;if(c.from)o.from=c.from;if(c.to)o.to=c.to;o.change=c.note||'Times changed'}})});
@@ -606,7 +596,7 @@ function initMap(){
   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,
     attribution:'Tiles &copy; Esri, HERE, Garmin, OpenStreetMap contributors'}).addTo(map);
   var b=[];
-  Object.keys(SP.locs).forEach(function(k){var l=SP.locs[k];
+  Object.keys(SP.locs).forEach(function(k){var l=SP.locs[k];if(l.lat==null||l.lng==null)return;
     var m=L.marker([l.lat,l.lng],{icon:pawIcon(l.col),title:l.name}).addTo(map)
       .bindPopup('<strong>'+l.name+'</strong>'+l.addr+'<br><b>'+l.regular+'</b>'+(l.note?'<br>'+l.note:'')+'<br><a href="'+dir(l)+'" target="_blank" rel="noopener">Get directions</a>');
     markers[k]=m;b.push([l.lat,l.lng])});
@@ -615,6 +605,11 @@ function initMap(){
   var fit=function(){map.fitBounds(b,{paddingTopLeft:[30,60],paddingBottomRight:[30,20],animate:false});if(el.offsetWidth>=500)map.setZoom(map.getZoom()-1,{animate:false})};
   fit();setTimeout(function(){map.invalidateSize();fit()},300);
 }
+function spEsc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function renderLocs(){var el=document.querySelector('#find .locs');if(!el)return;
+  el.innerHTML=(SP.order||Object.keys(SP.locs)).filter(function(k){return SP.locs[k]}).map(function(k){var l=SP.locs[k];
+    return '<div class="loc" style="--c:'+l.col+'"><h3>'+spEsc(l.name)+'</h3><div class="addr">'+spEsc(l.addr)+'</div>'+(l.regular?'<div class="when">'+spEsc(l.regular)+'</div>':'')+(l.note?'<div class="nb">'+spEsc(l.note)+'</div>':'')+
+      '<div class="acts">'+(l.lat!=null?'<button type="button" onclick="showOnMap(\''+k+'\')">Show on map</button><a href="'+dir(l)+'" target="_blank" rel="noopener">Directions</a>':'')+'</div></div>'}).join('')}
 function showOnMap(k){if(!map||!markers[k])return;document.getElementById('map').scrollIntoView({behavior:'smooth',block:'center'});map.setView(markers[k].getLatLng(),14);markers[k].openPopup()}
 var calM,calY,calSel;
 function renderCal(){
@@ -636,12 +631,18 @@ function showDay(){
   el.innerHTML='<h4>'+SP_DAYS[d.getDay()]+' '+d.getDate()+' '+SP_MON[d.getMonth()]+'</h4>'+(es.length?'<ul>'+es.map(function(o){
     return '<li><span class="sw" style="background:'+o.col+'"></span><span class="n">'+o.title+(o.change?'<span class="chg">'+o.change+'</span>':'')+'<small>'+spLine(o)+' &middot; '+o.where+'</small></span>'+(o.loc&&markers[o.loc]?'<button onclick="showOnMap(\''+o.loc+'\')">Map</button>':'')+'</li>'}).join('')+'</ul>':'<p style="margin:0;color:var(--text-muted)">No pitches booked for this day.</p>');
 }
-document.addEventListener('DOMContentLoaded',function(){
-  var t=new Date();calM=t.getMonth();calY=t.getFullYear();
-  document.getElementById('legend').innerHTML=Object.keys(SP.locs).map(function(k){var l=SP.locs[k];return '<span><i style="background:'+l.col+'"></i>'+l.short+'</span>'}).join('');
+function spLoad(){
+  /* The calendar Claire and Lucy edit at /admin. If it can't load, the timetable above is used. */
+  return new Promise(function(res){var done=false,fin=function(){if(!done){done=true;res()}};setTimeout(fin,3000);
+    fetch('/api/calendar',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(d){if(!done&&d&&d.locs){SP=d}fin()}).catch(fin)});
+}
+document.addEventListener('DOMContentLoaded',function(){spLoad().then(spStart)});
+function spStart(){
+  var t=new Date();calM=t.getMonth();calY=t.getFullYear();renderLocs();
+  document.getElementById('legend').innerHTML=(SP.order||Object.keys(SP.locs)).filter(function(k){return SP.locs[k]}).map(function(k){var l=SP.locs[k];return '<span><i style="background:'+l.col+'"></i>'+l.short+'</span>'}).join('');
   initMap();renderCal();
   var w=document.getElementById('week');if(w)spWeek(w,7);
-});
+}
 </script>
 </body>
 </html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Calendar Editor | SweetPea's Doggy Deli</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#622A3C;--hover:#491F2D;--light:#F5E5EA;--cream:#FDF9F4;--line:#e0e0e0;--text:#1a1a1a;--muted:#565656;--good:#1D4D2E;--bad:#A4161A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:var(--cream);color:var(--text);font-size:1.05rem;line-height:1.5;padding-bottom:110px}
+h1,h2,h3{font-family:'Fredoka',sans-serif;font-weight:600;color:var(--accent);line-height:1.2}
+h1{font-size:1.6rem}h2{font-size:1.35rem;margin-bottom:6px}h3{font-size:1.1rem}
+.wrap{max-width:860px;margin:0 auto;padding:0 18px}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 0;margin-bottom:18px}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header a{color:var(--accent);font-weight:700}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--accent);color:#fff;border:0;border-radius:6px;font:700 1rem 'Barlow',sans-serif;padding:11px 18px;min-height:44px;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--hover)}
+.btn.alt{background:#fff;color:var(--accent);border:2px solid var(--accent);padding:9px 16px}
+.btn.alt:hover{background:var(--light)}
+.btn.small{min-height:38px;padding:7px 12px;font-size:.95rem}
+.btn:disabled{opacity:.5;cursor:default}
+.link{background:none;border:0;color:var(--accent);font:700 .95rem 'Barlow',sans-serif;text-decoration:underline;cursor:pointer;padding:8px 4px;min-height:38px}
+.link.bad{color:var(--bad)}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:16px;margin-bottom:14px}
+.help{color:var(--muted);margin-bottom:12px}
+label.f{display:block;font-weight:700;font-size:.95rem;margin-bottom:10px}
+label.f span{display:block;margin-bottom:4px}
+input,select,textarea{width:100%;font:500 1rem 'Barlow',sans-serif;padding:9px 10px;border:1px solid #9a9a9a;border-radius:6px;background:#fff;min-height:44px;color:var(--text)}
+textarea{min-height:64px;resize:vertical}
+input[type=checkbox]{width:22px;height:22px;min-height:0;accent-color:var(--accent)}
+.row{display:grid;gap:10px}
+.r2{grid-template-columns:1fr 1fr}.r3{grid-template-columns:2fr 1fr 1fr}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.tabs button{border:2px solid var(--accent);background:#fff;color:var(--accent);border-radius:999px;font:700 1rem 'Barlow',sans-serif;padding:8px 16px;min-height:44px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--accent);color:#fff}
+.item{display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--line);padding:12px 0}
+.item:first-child{border-top:0}
+.item .sw{width:14px;height:14px;border-radius:50%;margin-top:6px;flex:none}
+.item .what{flex:1}
+.item .what b{display:block}
+.item .what small{color:var(--muted);display:block}
+.tag{display:inline-block;font-size:.85rem;font-weight:800;border-radius:4px;padding:1px 8px;margin-right:6px;text-transform:uppercase;letter-spacing:.03em}
+.tag.out{background:#E3EFE6;color:var(--good)}.tag.chg{background:#FBE7E7;color:var(--bad)}
+.slot{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.mslot{display:grid;grid-template-columns:2fr 1fr 1.2fr 1fr 1fr auto;gap:8px;align-items:center;margin-bottom:8px}
+.cols{display:flex;flex-wrap:wrap;gap:8px}
+.cols label{width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;border:3px solid transparent}
+.cols input{position:absolute;opacity:0;width:1px;height:1px}
+.cols label:has(input:checked){border-color:var(--text)}
+.pin{font-size:.95rem;font-weight:700}
+.pin.ok{color:var(--good)}.pin.no{color:var(--bad)}
+.savebar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(0,0,0,.08);padding:12px 0;z-index:5}
+.savebar .wrap{display:flex;gap:12px;align-items:center;justify-content:space-between}
+#msg{font-weight:700}
+#msg.ok{color:var(--good)}#msg.bad{color:var(--bad)}
+.login{max-width:420px;margin:60px auto}
+.empty{color:var(--muted);padding:6px 0}
+[hidden]{display:none!important}
+:focus-visible{outline:3px solid #D296A9;outline-offset:2px}
+@media(max-width:640px){.r2,.r3{grid-template-columns:1fr}.slot{grid-template-columns:1fr 1fr}.slot select{grid-column:1/-1}.mslot{grid-template-columns:1fr 1fr}.mslot select.p{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Calendar Editor</h1><div><a href="/#find" target="_blank" rel="noopener">See the website</a> &nbsp; <button type="button" class="link" id="logout" hidden>Log out</button></div></div></header>
+
+<main class="wrap">
+  <div id="loginbox" class="card login" hidden>
+    <h2>Log in</h2>
+    <p class="help">Type the password to change where you will be.</p>
+    <form id="loginform">
+      <label class="f"><span>Password</span><input type="password" id="pw" autocomplete="current-password" required></label>
+      <p id="loginerr" style="color:var(--bad);font-weight:700;margin-bottom:10px" hidden>That password is not right. Try again.</p>
+      <button class="btn" type="submit" style="width:100%">Log in</button>
+    </form>
+  </div>
+
+  <div id="app" hidden>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="days" aria-selected="true">Days Out &amp; Changes</button>
+      <button type="button" role="tab" data-tab="weekly" aria-selected="false">Weekly Times</button>
+      <button type="button" role="tab" data-tab="monthly" aria-selected="false">Monthly</button>
+      <button type="button" role="tab" data-tab="places" aria-selected="false">Places</button>
+    </div>
+    <section id="tab-days"></section>
+    <section id="tab-weekly" hidden></section>
+    <section id="tab-monthly" hidden></section>
+    <section id="tab-places" hidden></section>
+  </div>
+</main>
+
+<div class="savebar" id="savebar" hidden><div class="wrap"><span id="msg">No changes yet.</span><button type="button" class="btn" id="save" disabled>Save Changes</button></div></div>
+
+<script>
+var S=null,dirty=false,form=null;
+var DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var NTH=[[1,'1st'],[2,'2nd'],[3,'3rd'],[4,'4th'],[-1,'Last']];
+var COLS=['#622A3C','#1F6B45','#1F5A8A','#8A5200','#5E3A96','#A3332F','#2E5E5E','#B5476F','#3F4A9C','#6B6B1F'];
+function $(s){return document.querySelector(s)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function t12(t){if(!t)return'';var p=t.split(':'),h=+p[0],ap=h>=12?'pm':'am';h=h%12||12;return h+(p[1]!=='00'?':'+p[1]:'')+ap}
+function nice(d){var x=new Date(d+'T12:00:00');return DAYS[x.getDay()]+' '+x.getDate()+' '+MON[x.getMonth()]+' '+x.getFullYear()}
+function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function order(){return (S.order||Object.keys(S.locs)).filter(function(k){return S.locs[k]})}
+function placeOpts(sel,extra){return order().map(function(k){return '<option value="'+k+'"'+(k===sel?' selected':'')+'>'+esc(S.locs[k].name)+'</option>'}).join('')+(extra||'')}
+function api(path,opt){return fetch(path,Object.assign({credentials:'same-origin',cache:'no-store'},opt||{})).then(function(r){return r.json().then(function(d){d._status=r.status;return d})})}
+function changed(){dirty=true;$('#save').disabled=false;var m=$('#msg');m.className='';m.textContent='You have changes. Press Save to put them on the website.'}
+function postcodeOf(s){var m=String(s||'').toUpperCase().match(/[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}/);return m?m[0]:''}
+function lookup(pc){return fetch('https://api.postcodes.io/postcodes/'+encodeURIComponent(pc)).then(function(r){return r.json()}).then(function(d){return d&&d.result?{lat:d.result.latitude,lng:d.result.longitude}:null}).catch(function(){return null})}
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){
+  document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+  ['days','weekly','monthly','places'].forEach(function(t){$('#tab-'+t).hidden=t!==b.dataset.tab});form=null;render()})});
+
+/* ---------- days out and changes ---------- */
+function renderDays(){
+  var t=today(),items=[];
+  S.events.forEach(function(e,i){if(e.date>=t)items.push({k:'e',i:i,d:e.date,o:e})});
+  S.changes.forEach(function(c,i){if(c.date>=t)items.push({k:'c',i:i,d:c.date,o:c})});
+  items.sort(function(a,b){return a.d<b.d?-1:a.d>b.d?1:0});
+  var h='<div class="card"><h2>Days Out &amp; Changes</h2><p class="help">Add a dog show, fair or pop-up. Or change a normal day, like an early finish or a day off. These show on the calendar on the website.</p>'+
+    '<div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn" data-a="newE">+ Add A Day Out</button><button type="button" class="btn alt" data-a="newC">Change Or Close A Normal Day</button></div></div>';
+  if(form)h+=form.k==='e'?eventForm():changeForm();
+  h+='<div class="card"><h3>Coming up</h3>'+(items.length?items.map(function(it){var o=it.o,L=S.locs[o.loc]||{};
+    var what=it.k==='e'?'<span class="tag out">Day out</span>'+esc(o.loc?L.name:o.name):'<span class="tag chg">'+(o.closed?'Closed':'New times')+'</span>'+esc(L.name);
+    var when=it.k==='e'||!o.closed?t12(o.from||'')+(o.to?' to '+t12(o.to):''):'Not open this day';
+    return '<div class="item"><span class="sw" style="background:'+(L.col||'#B5476F')+'"></span><div class="what"><small>'+nice(o.date)+'</small><b>'+what+'</b><small>'+when+(o.note?' &middot; '+esc(o.note):'')+'</small></div>'+
+      '<button type="button" class="link" data-a="edit" data-k="'+it.k+'" data-i="'+it.i+'">Edit</button><button type="button" class="link bad" data-a="del" data-k="'+it.k+'" data-i="'+it.i+'">Delete</button></div>'}).join(''):'<p class="empty">Nothing added yet.</p>')+'</div>';
+  $('#tab-days').innerHTML=h;
+}
+function eventForm(){var e=form.o,isNew=!e.loc;
+  return '<div class="card" id="f"><h3>'+(form.i==null?'Add a day out':'Edit day out')+'</h3>'+
+  '<div class="row r2"><label class="f"><span>Date</span><input type="date" id="f-date" value="'+(e.date||'')+'" required></label>'+
+  '<label class="f"><span>Where</span><select id="f-loc">'+placeOpts(e.loc,'<option value=""'+(isNew?' selected':'')+'>Somewhere new...</option>')+'</select></label></div>'+
+  '<div id="f-new"'+(isNew?'':' hidden')+'><div class="row r2"><label class="f"><span>Name of the place</span><input id="f-name" value="'+esc(e.name)+'" placeholder="Malvern Dog Show"></label>'+
+  '<label class="f"><span>Address with postcode</span><input id="f-addr" value="'+esc(e.addr)+'" placeholder="Three Counties Showground, WR13 6NW"></label></div>'+
+  '<p class="help" style="margin-top:-4px">Put the postcode in the address and we will add a pin to the map.</p></div>'+
+  '<div class="row r2"><label class="f"><span>From</span><input type="time" id="f-from" value="'+(e.from||'10:00')+'"></label><label class="f"><span>To</span><input type="time" id="f-to" value="'+(e.to||'16:00')+'"></label></div>'+
+  '<label class="f"><span>Note (if you want one)</span><input id="f-note" value="'+esc(e.note)+'" placeholder="Stand 14, by the main ring"></label>'+
+  '<p id="f-err" style="color:var(--bad);font-weight:700" hidden></p>'+
+  '<div style="display:flex;gap:10px"><button type="button" class="btn" data-a="okE">'+(form.i==null?'Add It':'Update It')+'</button><button type="button" class="btn alt" data-a="cancel">Cancel</button></div></div>'}
+function changeForm(){var c=form.o;
+  return '<div class="card" id="f"><h3>Change or close a normal day</h3>'+
+  '<div class="row r2"><label class="f"><span>Date</span><input type="date" id="f-date" value="'+(c.date||'')+'" required></label>'+
+  '<label class="f"><span>Which place</span><select id="f-loc">'+placeOpts(c.loc)+'</select></label></div>'+
+  '<label class="f" style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="f-closed"'+(c.closed?' checked':'')+'> <span style="margin:0">We are not there this day</span></label>'+
+  '<div id="f-times"'+(c.closed?' hidden':'')+'><p class="help">New times for this day:</p><div class="row r2"><label class="f"><span>From</span><input type="time" id="f-from" value="'+(c.from||'')+'"></label><label class="f"><span>To</span><input type="time" id="f-to" value="'+(c.to||'')+'"></label></div></div>'+
+  '<label class="f"><span>Note people will see</span><input id="f-note" value="'+esc(c.note)+'" placeholder="Finishing early today"></label>'+
+  '<p id="f-err" style="color:var(--bad);font-weight:700" hidden></p>'+
+  '<div style="display:flex;gap:10px"><button type="button" class="btn" data-a="okC">'+(form.i==null?'Add It':'Update It')+'</button><button type="button" class="btn alt" data-a="cancel">Cancel</button></div></div>'}
+function ferr(t){var e=$('#f-err');e.textContent=t;e.hidden=false}
+function saveEvent(){
+  var e={date:$('#f-date').value,from:$('#f-from').value,to:$('#f-to').value},loc=$('#f-loc').value,note=$('#f-note').value.trim();
+  if(!e.date)return ferr('Pick a date.');if(!e.from||!e.to)return ferr('Put in the times.');
+  if(note)e.note=note;
+  var finish=function(){if(form.i==null)S.events.push(e);else S.events[form.i]=e;form=null;changed();render()};
+  if(loc){e.loc=loc;return finish()}
+  e.name=$('#f-name').value.trim();e.addr=$('#f-addr').value.trim();
+  if(!e.name)return ferr('Type the name of the place.');
+  var pc=postcodeOf(e.addr),old=form.o;
+  if(old.lat&&old.addr===e.addr){e.lat=old.lat;e.lng=old.lng;return finish()}
+  if(!pc)return finish();
+  lookup(pc).then(function(p){if(p){e.lat=p.lat;e.lng=p.lng}finish()});
+}
+function saveChange(){
+  var c={date:$('#f-date').value,loc:$('#f-loc').value},note=$('#f-note').value.trim();
+  if(!c.date)return ferr('Pick a date.');
+  if($('#f-closed').checked)c.closed=true;else{c.from=$('#f-from').value;c.to=$('#f-to').value;if(!c.from&&!c.to)return ferr('Put in the new times, or tick "We are not there this day".')}
+  if(note)c.note=note;
+  if(form.i==null)S.changes.push(c);else S.changes[form.i]=c;form=null;changed();render();
+}
+
+/* ---------- weekly ---------- */
+function renderWeekly(){
+  var h='<div class="card"><h2>Weekly Times</h2><p class="help">Where you are every week. Add a row for each place you go that day.</p></div>';
+  [1,2,3,4,5,6,0].forEach(function(d){var rows=S.weekly[d]||[];
+    h+='<div class="card"><h3>'+DAYS[d]+'</h3>'+(rows.length?'':'<p class="empty">Nothing on '+DAYS[d]+'s.</p>')+rows.map(function(r,i){
+      return '<div class="slot"><select data-w="'+d+'" data-i="'+i+'" data-f="0" aria-label="Place">'+placeOpts(r[0])+'</select>'+
+      '<input type="time" value="'+r[1]+'" data-w="'+d+'" data-i="'+i+'" data-f="1" aria-label="From"><input type="time" value="'+r[2]+'" data-w="'+d+'" data-i="'+i+'" data-f="2" aria-label="To">'+
+      '<button type="button" class="link bad" data-a="wdel" data-d="'+d+'" data-i="'+i+'">Remove</button></div>'}).join('')+
+      '<button type="button" class="btn alt small" data-a="wadd" data-d="'+d+'">+ Add a place on '+DAYS[d]+'</button></div>'});
+  $('#tab-weekly').innerHTML=h;
+}
+
+/* ---------- monthly ---------- */
+function renderMonthly(){
+  var h='<div class="card"><h2>Monthly</h2><p class="help">For places you go on the same day each month, like the 2nd and last Friday.</p>'+
+  (S.monthly.length?'':'<p class="empty">Nothing monthly yet.</p>')+S.monthly.map(function(m,i){
+    return '<div class="mslot"><select class="p" data-m="'+i+'" data-f="loc" aria-label="Place">'+placeOpts(m.loc)+'</select>'+
+    '<select data-m="'+i+'" data-f="n" aria-label="Which one">'+NTH.map(function(n){return '<option value="'+n[0]+'"'+(n[0]===m.n?' selected':'')+'>'+n[1]+'</option>'}).join('')+'</select>'+
+    '<select data-m="'+i+'" data-f="dow" aria-label="Day">'+[1,2,3,4,5,6,0].map(function(d){return '<option value="'+d+'"'+(d===m.dow?' selected':'')+'>'+DAYS[d]+'</option>'}).join('')+'</select>'+
+    '<input type="time" value="'+m.from+'" data-m="'+i+'" data-f="from" aria-label="From"><input type="time" value="'+m.to+'" data-m="'+i+'" data-f="to" aria-label="To">'+
+    '<button type="button" class="link bad" data-a="mdel" data-i="'+i+'">Remove</button></div>'}).join('')+
+  '<button type="button" class="btn alt small" data-a="madd">+ Add a monthly day</button></div>';
+  $('#tab-monthly').innerHTML=h;
+}
+
+/* ---------- places ---------- */
+function renderPlaces(){
+  var h='<div class="card"><h2>Places</h2><p class="help">Your shop and the places you go. The colour is the dot on the calendar and the pin on the map.</p><button type="button" class="btn" data-a="padd">+ Add A Place</button></div>';
+  order().forEach(function(k){var l=S.locs[k];
+    h+='<div class="card"><div class="row r2"><label class="f"><span>Name</span><input data-p="'+k+'" data-f="name" value="'+esc(l.name)+'"></label>'+
+    '<label class="f"><span>Short name (for the calendar key)</span><input data-p="'+k+'" data-f="short" value="'+esc(l.short)+'"></label></div>'+
+    '<label class="f"><span>Address with postcode</span><input data-p="'+k+'" data-f="addr" value="'+esc(l.addr)+'"></label>'+
+    '<p class="pin '+(l.lat!=null?'ok':'no')+'">'+(l.lat!=null?'&#10003; On the map':'Not on the map yet. Add a postcode to the address.')+'</p>'+
+    '<label class="f" style="margin-top:8px"><span>When you are there (shown on the website)</span><input data-p="'+k+'" data-f="regular" value="'+esc(l.regular)+'" placeholder="Every Wednesday, 9am to 3pm."></label>'+
+    '<label class="f"><span>Extra note (if you want one)</span><input data-p="'+k+'" data-f="note" value="'+esc(l.note)+'" placeholder="No harness fittings here."></label>'+
+    '<div class="f" style="font-weight:700;font-size:.95rem">Colour</div><div class="cols">'+COLS.map(function(c){return '<label style="background:'+c+'"><input type="radio" name="col-'+k+'" value="'+c+'" data-p="'+k+'" data-f="col"'+(c.toLowerCase()===String(l.col).toLowerCase()?' checked':'')+' aria-label="Colour '+c+'"></label>'}).join('')+'</div>'+
+    '<div style="margin-top:10px"><button type="button" class="link bad" data-a="pdel" data-k="'+k+'">Delete this place</button></div></div>'});
+  $('#tab-places').innerHTML=h;
+}
+
+function render(){if(!S)return;
+  var t=document.querySelector('.tabs [aria-selected=true]').dataset.tab;
+  if(t==='days')renderDays();if(t==='weekly')renderWeekly();if(t==='monthly')renderMonthly();if(t==='places')renderPlaces();
+  var f=$('#f');if(f&&form&&form.scroll){form.scroll=false;f.scrollIntoView({behavior:'smooth',block:'start'});var d=$('#f-date');if(d)d.focus()}
+}
+
+/* ---------- clicks ---------- */
+document.addEventListener('click',function(ev){var b=ev.target.closest('[data-a]');if(!b)return;var a=b.dataset.a,i=+b.dataset.i;
+  if(a==='newE'){form={k:'e',o:{loc:''},scroll:true};form.o.loc=null;render()}
+  if(a==='newC'){form={k:'c',o:{loc:order()[0]},scroll:true};render()}
+  if(a==='edit'){form={k:b.dataset.k,i:i,o:JSON.parse(JSON.stringify(b.dataset.k==='e'?S.events[i]:S.changes[i])),scroll:true};render()}
+  if(a==='cancel'){form=null;render()}
+  if(a==='del'&&confirm('Delete this?')){(b.dataset.k==='e'?S.events:S.changes).splice(i,1);changed();render()}
+  if(a==='okE')saveEvent();
+  if(a==='okC')saveChange();
+  if(a==='wadd'){var d=b.dataset.d;(S.weekly[d]=S.weekly[d]||[]).push([order()[0],'09:00','15:00']);changed();render()}
+  if(a==='wdel'){S.weekly[b.dataset.d].splice(i,1);changed();render()}
+  if(a==='madd'){S.monthly.push({loc:order()[0],n:1,dow:6,from:'09:00',to:'14:00'});changed();render()}
+  if(a==='mdel'){S.monthly.splice(i,1);changed();render()}
+  if(a==='padd'){var k='p'+Date.now().toString(36);S.locs[k]={name:'New place',short:'New place',addr:'',lat:null,lng:null,col:COLS[order().length%COLS.length],regular:''};S.order=order().concat(k);changed();render();
+    var inp=document.querySelector('[data-p="'+k+'"][data-f="name"]');inp.scrollIntoView({block:'center'});inp.select()}
+  if(a==='pdel'){var k=b.dataset.k;if(!confirm('Delete '+S.locs[k].name+'? It will also come off the weekly times, monthly days and any changes.'))return;
+    delete S.locs[k];S.order=order();
+    Object.keys(S.weekly).forEach(function(d){S.weekly[d]=S.weekly[d].filter(function(r){return r[0]!==k})});
+    S.monthly=S.monthly.filter(function(m){return m.loc!==k});S.changes=S.changes.filter(function(c){return c.loc!==k});
+    S.events=S.events.filter(function(e){return e.loc!==k});changed();render()}
+});
+
+/* ---------- typing in the forms ---------- */
+document.addEventListener('change',function(ev){var t=ev.target,d=t.dataset;
+  if(t.id==='f-loc'&&$('#f-new'))$('#f-new').hidden=!!t.value;
+  if(t.id==='f-closed')$('#f-times').hidden=t.checked;
+  if(d.w!=null){var v=t.value;if(d.f!=='0'&&!v)return;S.weekly[d.w][+d.i][+d.f]=v;changed()}
+  if(d.m!=null){var m=S.monthly[+d.m];m[d.f]=(d.f==='n'||d.f==='dow')?+t.value:t.value;changed()}
+  if(d.p!=null){var l=S.locs[d.p];if(d.f==='addr'){l.addr=t.value.trim();var pc=postcodeOf(l.addr);changed();
+      if(pc)lookup(pc).then(function(p){if(p){l.lat=p.lat;l.lng=p.lng}else{l.lat=null;l.lng=null}render()});else render();return}
+    l[d.f]=t.value.trim();if(d.f==='name'&&!l.short)l.short=l.name;changed()}
+});
+
+/* ---------- save ---------- */
+$('#save').addEventListener('click',function(){var b=this;b.disabled=true;var m=$('#msg');m.className='';m.textContent='Saving...';
+  api('/api/calendar',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(S)}).then(function(d){
+    if(d._status===401){m.className='bad';m.textContent='You have been logged out. Log in again, then press Save.';b.disabled=false;showLogin();return}
+    if(!d.ok)throw 0;S=d.data;dirty=false;m.className='ok';m.textContent='Saved. The website now shows this.';render()
+  }).catch(function(){b.disabled=false;m.className='bad';m.textContent='That did not save. Check your internet and try again.'})});
+window.addEventListener('beforeunload',function(e){if(dirty){e.preventDefault();e.returnValue=''}});
+
+/* ---------- login ---------- */
+function showLogin(){$('#loginbox').hidden=false;$('#logout').hidden=true;if(!S){$('#app').hidden=true;$('#savebar').hidden=true}setTimeout(function(){$('#pw').focus()},50)}
+function start(){$('#loginbox').hidden=true;$('#logout').hidden=false;
+  if(S){return}
+  api('/api/calendar').then(function(d){S=d;S.events=S.events||[];S.changes=S.changes||[];S.monthly=S.monthly||[];S.weekly=S.weekly||{};S.order=order();
+    $('#app').hidden=false;$('#savebar').hidden=false;render()})}
+$('#loginform').addEventListener('submit',function(e){e.preventDefault();$('#loginerr').hidden=true;
+  api('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password:$('#pw').value})}).then(function(d){
+    if(d.in){$('#pw').value='';start()}else{$('#loginerr').hidden=false;$('#pw').select()}})});
+$('#logout').addEventListener('click',function(){if(dirty&&!confirm('You have not saved. Log out anyway?'))return;
+  api('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({logout:true})}).then(function(){dirty=false;location.reload()})});
+api('/api/login').then(function(d){d.in?start():showLogin()}).catch(showLogin);
+</script>
+</body>
+</html>

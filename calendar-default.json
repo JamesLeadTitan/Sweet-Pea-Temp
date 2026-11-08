@@ -1,0 +1,152 @@
+{
+ "locs": {
+  "hq": {
+   "name": "SweetPea's HQ",
+   "short": "HQ",
+   "addr": "Back of 25 High St, Tewkesbury GL20 5AT",
+   "lat": 51.99235,
+   "lng": -2.1599,
+   "col": "#622A3C",
+   "regular": "Tuesday, Thursday and Friday 9:30am to 4:30pm. Saturday 9:30am to 2pm."
+  },
+  "bwb": {
+   "name": "Bennetts Willow Barn",
+   "short": "Willow Barn",
+   "addr": "Manor Farm, Malvern Road, Lower Wick, Worcester WR2 4BS",
+   "lat": 52.1759,
+   "lng": -2.237,
+   "col": "#1F6B45",
+   "regular": "Tuesday 12:30pm to 4pm. Friday and Saturday 10:30am to 2pm."
+  },
+  "tm": {
+   "name": "Tewkesbury Market",
+   "short": "Market",
+   "addr": "Spring Gardens car park, Tewkesbury",
+   "lat": 51.9942,
+   "lng": -2.1619,
+   "col": "#1F5A8A",
+   "regular": "Every Wednesday, 9am to 3pm."
+  },
+  "boat": {
+   "name": "The Boathouse",
+   "short": "Boathouse",
+   "addr": "Pittville Park boating lake, Cheltenham",
+   "lat": 51.9127,
+   "lng": -2.0697,
+   "col": "#8A5200",
+   "regular": "Every Thursday, 10am to 3pm."
+  },
+  "cfm": {
+   "name": "Cheltenham Farmers Market",
+   "short": "Farmers Market",
+   "addr": "Promenade, Cheltenham GL50 1LE",
+   "lat": 51.8987,
+   "lng": -2.0783,
+   "col": "#5E3A96",
+   "regular": "2nd and last Friday of the month, 9am to 2pm.",
+   "note": "No harness fittings at this market."
+  },
+  "cdo": {
+   "name": "Cotswolds Designer Outlet",
+   "short": "Outlet",
+   "addr": "Platinum Drive, Tewkesbury GL20 7FY",
+   "lat": 51.998,
+   "lng": -2.114,
+   "col": "#A3332F",
+   "regular": "Two Sundays a month, 10:30am to 4:30pm. Dates in the calendar."
+  },
+  "ffm": {
+   "name": "Tewkesbury Fine Food and Craft Market",
+   "short": "Fine Food Market",
+   "addr": "High Street, Tewkesbury",
+   "lat": 51.9935,
+   "lng": -2.1593,
+   "col": "#2E5E5E",
+   "regular": "Selected Sundays, 10am to 4pm. Dates in the calendar."
+  }
+ },
+ "weekly": {
+  "2": [
+   [
+    "hq",
+    "09:30",
+    "16:30"
+   ],
+   [
+    "bwb",
+    "12:30",
+    "16:00"
+   ]
+  ],
+  "3": [
+   [
+    "tm",
+    "09:00",
+    "15:00"
+   ]
+  ],
+  "4": [
+   [
+    "hq",
+    "09:30",
+    "16:30"
+   ],
+   [
+    "boat",
+    "10:00",
+    "15:00"
+   ]
+  ],
+  "5": [
+   [
+    "hq",
+    "09:30",
+    "16:30"
+   ],
+   [
+    "bwb",
+    "10:30",
+    "14:00"
+   ]
+  ],
+  "6": [
+   [
+    "hq",
+    "09:30",
+    "14:00"
+   ],
+   [
+    "bwb",
+    "10:30",
+    "14:00"
+   ]
+  ]
+ },
+ "monthly": [
+  {
+   "loc": "cfm",
+   "n": 2,
+   "dow": 5,
+   "from": "09:00",
+   "to": "14:00"
+  },
+  {
+   "loc": "cfm",
+   "n": -1,
+   "dow": 5,
+   "from": "09:00",
+   "to": "14:00"
+  }
+ ],
+ "events": [],
+ "changes": [],
+ "order": [
+  "hq",
+  "bwb",
+  "tm",
+  "boat",
+  "cfm",
+  "cdo",
+  "ffm"
+ ]
+}
