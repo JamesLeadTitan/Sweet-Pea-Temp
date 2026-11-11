@@ -487,6 +487,7 @@ function toggleFaq(b){var i=b.parentElement;var o=i.classList.contains('open');d
    buttons at the neighbouring folder instead of the live domain. No effect once deployed. */
 (function(){if(location.protocol!=='file:')return;document.querySelectorAll('a[data-sister]').forEach(function(a){a.href='../'+a.getAttribute('data-sister')+'/index.html'})})();
 
+function niceDate(v){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(v||'');if(!m)return v;var d=new Date(Date.UTC(+m[1],m[2]-1,+m[3]));return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getUTCDay()]+' '+d.getUTCDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()]+' '+m[1]}
 function sendEnquiry(f){
   var g=function(n){var el=f.elements[n];if(!el)return '';if(el.length&&el[0]&&el[0].type==='radio'){for(var i=0;i<el.length;i++){if(el[i].checked)return el[i].value}return ''}return (el.value||'').trim()};
   var need=['name','phone','date','evtype','where'];var miss=need.filter(function(n){return !g(n)});
@@ -495,7 +496,7 @@ function sendEnquiry(f){
   err.style.display='none';
   var lines=['Hi SweetPea\'s, I would like to book you for an event.','',
     'Name: '+g('name'),'Phone: '+g('phone'),(g('email')?'Email: '+g('email'):null),
-    'Event: '+(g('evname')||'(not named yet)'),'Date: '+g('date'),'Where: '+g('where'),
+    'Event: '+(g('evname')||'(not named yet)'),'Date: '+niceDate(g('date')),'Where: '+g('where'),
     'Type of event: '+g('evtype'),'Indoor or outdoor: '+(g('inout')||'Not sure yet'),
     'We would like: '+g('wanted'),(g('size')?'Expected visitors: '+g('size'):null),(g('notes')?'Notes: '+g('notes'):null)];
   var msg=lines.filter(function(l){return l!==null}).join('\n');
