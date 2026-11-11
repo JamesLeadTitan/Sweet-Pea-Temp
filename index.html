@@ -325,6 +325,17 @@ footer a:hover{text-decoration:underline}
 .daydetail ul{list-style:none}
 .daydetail li{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--grey-mid)}
 .daydetail li:last-child{border-bottom:0}
+.daydetail .pst{display:block;margin:10px 0 2px;padding:0;min-height:0;border:1px solid var(--grey-mid);border-radius:6px;overflow:hidden;background:#fff;cursor:zoom-in;line-height:0;max-width:170px}
+.daydetail .pst img{display:block;width:100%;height:auto}
+.loc .pst-th{display:block;width:96px;margin:4px 0 10px;padding:0;border:1px solid var(--grey-mid);border-radius:6px;overflow:hidden;background:#fff;cursor:zoom-in;line-height:0}
+.loc .pst-th img{display:block;width:100%;height:auto}
+.leaflet-popup-content .ppst{display:block;width:110px;margin-top:8px;border-radius:4px;cursor:zoom-in}
+#posterbox{border:0;border-radius:10px;padding:0;max-width:94vw;max-height:94vh;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+#posterbox::backdrop{background:rgba(0,0,0,.7)}
+#posterbox img{display:block;max-width:94vw;max-height:calc(94vh - 64px);width:auto;height:auto;margin:0 auto}
+#posterbox .pb-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px}
+#posterbox .pb-bar b{font-family:var(--font-heading);font-size:1.1rem}
+#posterbox .pb-bar button{background:var(--accent);color:#fff;border:0;border-radius:6px;font:700 1rem var(--font-body);padding:10px 18px;min-height:44px;cursor:pointer}
 .daydetail .sw{width:14px;height:14px;border-radius:50%;margin-top:6px;flex-shrink:0}
 .daydetail .n{font-weight:700}
 .daydetail .n small{display:block;font-weight:500;color:var(--text-muted);font-size:1rem}
@@ -572,9 +583,9 @@ function spDay(d){
     if(m.rule==='last-friday')ok=(dow===5&&date+7>dim);
     if(m.n!=null&&m.dow===dow)ok=m.n===-1?date+7>dim:Math.ceil(date/7)===m.n;
     if(ok&&!out.some(function(o){return o.loc===m.loc}))out.push({loc:m.loc,from:m.from,to:m.to})});
-  SP.events.forEach(function(e){if(e.date===key)out.push({loc:e.loc,name:e.name,addr:e.addr,from:e.from,to:e.to,note:e.note,lat:e.lat,lng:e.lng,ev:1})});
+  SP.events.forEach(function(e,i){if(e.date===key)out.push({loc:e.loc,name:e.name,addr:e.addr,from:e.from,to:e.to,note:e.note,lat:e.lat,lng:e.lng,poster:e.poster,ev:1,ei:i})});
   SP.changes.forEach(function(c){if(c.date!==key)return;out.forEach(function(o){if(o.loc===c.loc){if(c.closed)o.closed=1;if(c.from)o.from=c.from;if(c.to)o.to=c.to;o.change=c.note||'Times changed'}})});
-  return out.map(function(o){var L=SP.locs[o.loc]||{};o.title=o.name||L.name;o.where=o.addr||L.addr;o.col=L.col||'#622A3C';return o});
+  return out.map(function(o){var L=SP.locs[o.loc]||{};o.title=o.name||L.name;o.where=o.addr||L.addr;o.col=L.col||(o.ev?'#B5476F':'#622A3C');if(!o.poster&&L.poster)o.poster=L.poster;return o});
 }
 function spLine(o){return o.closed?'Closed':spT(o.from)+' to '+spT(o.to)}
 var SP_DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -601,17 +612,24 @@ function initMap(){
   var b=[];
   Object.keys(SP.locs).forEach(function(k){var l=SP.locs[k];if(l.lat==null||l.lng==null)return;
     var m=L.marker([l.lat,l.lng],{icon:pawIcon(l.col),title:l.name}).addTo(map)
-      .bindPopup('<strong>'+l.name+'</strong>'+l.addr+'<br><b>'+l.regular+'</b>'+(l.note?'<br>'+l.note:'')+'<br><a href="'+dir(l)+'" target="_blank" rel="noopener">Get directions</a>');
+      .bindPopup('<strong>'+l.name+'</strong>'+l.addr+'<br><b>'+l.regular+'</b>'+(l.note?'<br>'+l.note:'')+'<br><a href="'+dir(l)+'" target="_blank" rel="noopener">Get directions</a>'+(l.poster?'<img class="ppst" src="/api/poster/'+l.poster+'" alt="Poster for '+spEsc(l.name)+'" onclick="openPoster(\''+l.poster+'\',\''+spEsc(l.name).replace(/'/g,'&#39;')+'\')">':''));
     markers[k]=m;b.push([l.lat,l.lng])});
-  SP.events.forEach(function(e){if(e.lat&&!e.loc){L.marker([e.lat,e.lng],{icon:pawIcon('#B5476F'),title:e.name}).addTo(map).bindPopup('<strong>'+e.name+'</strong>'+(e.addr||'')+'<br><b>'+e.date+'</b>')}});
+  SP.events.forEach(function(e,i){if(e.lat&&!e.loc){markers['e'+i]=L.marker([e.lat,e.lng],{icon:pawIcon('#B5476F'),title:e.name}).addTo(map).bindPopup('<strong>'+spEsc(e.name)+'</strong>'+spEsc(e.addr||'')+'<br><b>'+spNice(e.date)+', '+spT(e.from)+' to '+spT(e.to)+'</b>'+(e.note?'<br>'+spEsc(e.note):'')+'<br><a href="'+dir(e)+'" target="_blank" rel="noopener">Get directions</a>'+(e.poster?'<img class="ppst" src="/api/poster/'+e.poster+'" alt="Poster for '+spEsc(e.name)+'" onclick="openPoster(\''+e.poster+'\',\''+spEsc(e.name).replace(/'/g,'&#39;')+'\')">':''))}});
   /* Fit every pitch, then step out one zoom level so the towns around them show too. */
   var fit=function(){map.fitBounds(b,{paddingTopLeft:[30,60],paddingBottomRight:[30,20],animate:false});if(el.offsetWidth>=500)map.setZoom(map.getZoom()-1,{animate:false})};
   fit();setTimeout(function(){map.invalidateSize();fit()},300);
 }
+function spNice(k){var p=k.split('-'),d=new Date(+p[0],p[1]-1,+p[2]);return SP_DAYS[d.getDay()]+' '+d.getDate()+' '+SP_MON[d.getMonth()]}
+function openPoster(id,title){var b=document.getElementById('posterbox');if(!b){b=document.createElement('dialog');b.id='posterbox';
+    b.innerHTML='<div class="pb-bar"><b></b><button type="button">Close</button></div><img alt="">';document.body.appendChild(b);
+    b.querySelector('button').onclick=function(){b.close()};b.addEventListener('click',function(e){if(e.target===b)b.close()})}
+  b.querySelector('b').textContent=title||'Poster';var im=b.querySelector('img');im.src='/api/poster/'+id;im.alt='Poster for '+(title||'this day');
+  if(b.showModal)b.showModal();else window.open('/api/poster/'+id,'_blank')}
 function spEsc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function renderLocs(){var el=document.querySelector('#find .locs');if(!el)return;
   el.innerHTML=(SP.order||Object.keys(SP.locs)).filter(function(k){return SP.locs[k]}).map(function(k){var l=SP.locs[k];
     return '<div class="loc" style="--c:'+l.col+'"><h3>'+spEsc(l.name)+'</h3><div class="addr">'+spEsc(l.addr)+'</div>'+(l.regular?'<div class="when">'+spEsc(l.regular)+'</div>':'')+(l.note?'<div class="nb">'+spEsc(l.note)+'</div>':'')+
+      (l.poster?'<button type="button" class="pst-th" onclick="openPoster(\''+l.poster+'\',this.dataset.t)" data-t="'+spEsc(l.name)+'" aria-label="See the poster for '+spEsc(l.name)+'"><img src="/api/poster/'+l.poster+'" alt="" loading="lazy"></button>':'')+
       '<div class="acts">'+(l.lat!=null?'<button type="button" onclick="showOnMap(\''+k+'\')">Show on map</button><a href="'+dir(l)+'" target="_blank" rel="noopener">Directions</a>':'')+'</div></div>'}).join('')}
 function showOnMap(k){if(!map||!markers[k])return;document.getElementById('map').scrollIntoView({behavior:'smooth',block:'center'});map.setView(markers[k].getLatLng(),14);markers[k].openPopup()}
 var calM,calY,calSel;
@@ -632,7 +650,9 @@ function showDay(){
     for(var i=0;i<7;i++){var x=new Date(s);x.setDate(s.getDate()+i);if(x.getMonth()!==calM)break;if(spDay(x).length)return x}return s})();
   var es=spDay(d);
   el.innerHTML='<h4>'+SP_DAYS[d.getDay()]+' '+d.getDate()+' '+SP_MON[d.getMonth()]+'</h4>'+(es.length?'<ul>'+es.map(function(o){
-    return '<li><span class="sw" style="background:'+o.col+'"></span><span class="n">'+o.title+(o.change?'<span class="chg">'+o.change+'</span>':'')+'<small>'+spLine(o)+' &middot; '+o.where+'</small></span>'+(o.loc&&markers[o.loc]?'<button onclick="showOnMap(\''+o.loc+'\')">Map</button>':'')+'</li>'}).join('')+'</ul>':'<p style="margin:0;color:var(--text-muted)">No pitches booked for this day.</p>');
+    return '<li><span class="sw" style="background:'+o.col+'"></span><span class="n">'+o.title+(o.change?'<span class="chg">'+o.change+'</span>':'')+'<small>'+spLine(o)+(o.where?' &middot; '+o.where:'')+'</small>'+(o.note&&o.ev?'<small>'+spEsc(o.note)+'</small>':'')+
+      (o.poster?'<button type="button" class="pst" onclick="openPoster(\''+o.poster+'\',this.dataset.t)" data-t="'+spEsc(o.title)+'" aria-label="See the poster for '+spEsc(o.title)+'"><img src="/api/poster/'+o.poster+'" alt="" loading="lazy"></button>':'')+'</span>'+
+      (o.loc&&markers[o.loc]?'<button onclick="showOnMap(\''+o.loc+'\')">Map</button>':(o.ev&&markers['e'+o.ei]?'<button onclick="showOnMap(\'e'+o.ei+'\')">Map</button>':''))+'</li>'}).join('')+'</ul>':'<p style="margin:0;color:var(--text-muted)">No pitches booked for this day.</p>');
 }
 function spLoad(){
   /* The calendar Claire and Lucy edit at /admin. If it can't load, the timetable above is used. */

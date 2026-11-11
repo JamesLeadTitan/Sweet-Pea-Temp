@@ -57,6 +57,7 @@ const str = (v, n) => String(v == null ? '' : v).replace(/[<>\u0000-\u001f]/g, '
 const time = (v) => (/^([01]\d|2[0-3]):[0-5]\d$/.test(v) ? v : null);
 const day = (v) => (/^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null);
 const num = (v, lo, hi) => (typeof v === 'number' && v >= lo && v <= hi ? Math.round(v * 1e5) / 1e5 : null);
+const poster = (v) => (/^[a-f0-9]{32}$/.test(v) ? v : null);
 const colour = (v) => (/^#[0-9a-fA-F]{6}$/.test(v) ? v : '#622A3C');
 
 // Checks everything sent from the editor. Anything odd is dropped rather than saved.
@@ -80,6 +81,7 @@ export function cleanCalendar(sp) {
     };
     const note = str(l.note, 150);
     if (note) out.locs[k].note = note;
+    if (poster(l.poster)) out.locs[k].poster = l.poster;
   }
   const has = (k) => Object.prototype.hasOwnProperty.call(out.locs, k);
   out.order = (Array.isArray(sp.order) ? sp.order : []).filter(has);
@@ -114,6 +116,7 @@ export function cleanCalendar(sp) {
       }
       const note = str(e.note, 150);
       if (note) o.note = note;
+      if (poster(e.poster)) o.poster = e.poster;
       return o;
     })
     .sort((a, b) => (a.date < b.date ? -1 : 1));
@@ -135,4 +138,13 @@ export function cleanCalendar(sp) {
     .sort((a, b) => (a.date < b.date ? -1 : 1));
 
   return out;
+}
+
+// Posters used by a calendar (places and days out).
+export function postersIn(cal) {
+  const ids = new Set();
+  if (!cal) return ids;
+  Object.values(cal.locs || {}).forEach((l) => l && l.poster && ids.add(l.poster));
+  (cal.events || []).forEach((e) => e && e.poster && ids.add(e.poster));
+  return ids;
 }

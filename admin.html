@@ -58,6 +58,16 @@ input[type=checkbox]{width:22px;height:22px;min-height:0;accent-color:var(--acce
 #msg.ok{color:var(--good)}#msg.bad{color:var(--bad)}
 .login{max-width:420px;margin:60px auto}
 .empty{color:var(--muted);padding:6px 0}
+.poster{margin:4px 0 14px}
+.poster .lbl{display:block;font-weight:700;font-size:.95rem;margin-bottom:6px}
+.poster img{display:block;max-width:180px;max-height:240px;border-radius:6px;border:1px solid var(--line);margin-bottom:8px}
+.poster .acts{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.poster label.btn{position:relative}
+.poster label.btn:focus-within{outline:3px solid #D296A9;outline-offset:2px}
+.poster input[type=file]{position:absolute;opacity:0;width:1px;height:1px;min-height:0;padding:0;border:0}
+.poster .pmsg{display:block;font-weight:700;margin-top:6px}
+.poster .pmsg.bad{color:var(--bad)}.poster .pmsg.ok{color:var(--good)}
+.item img.pth{width:44px;height:58px;object-fit:cover;border-radius:4px;border:1px solid var(--line);flex:none}
 [hidden]{display:none!important}
 :focus-visible{outline:3px solid #D296A9;outline-offset:2px}
 @media(max-width:640px){.r2,.r3{grid-template-columns:1fr}.slot{grid-template-columns:1fr 1fr}.slot select{grid-column:1/-1}.mslot{grid-template-columns:1fr 1fr}.mslot select.p{grid-column:1/-1}}
@@ -111,6 +121,32 @@ function changed(){dirty=true;$('#save').disabled=false;var m=$('#msg');m.classN
 function postcodeOf(s){var m=String(s||'').toUpperCase().match(/[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}/);return m?m[0]:''}
 function lookup(pc){return fetch('https://api.postcodes.io/postcodes/'+encodeURIComponent(pc)).then(function(r){return r.json()}).then(function(d){return d&&d.result?{lat:d.result.latitude,lng:d.result.longitude}:null}).catch(function(){return null})}
 
+/* ---------- posters ---------- */
+function posterBox(id,up,boxId){
+  return '<div class="poster"'+(boxId?' id="'+boxId+'"':'')+'><span class="lbl">Poster (if you have one)</span>'+
+    (id?'<img src="/api/poster/'+id+'" alt="Poster">':'')+
+    '<div class="acts"><label class="btn alt small">'+(id?'Change poster':'+ Add a poster')+'<input type="file" accept="image/*" data-up="'+up+'"></label>'+
+    (id?'<button type="button" class="link bad" data-a="prm" data-up="'+up+'">Remove poster</button>':'')+'</div>'+
+    '<span class="pmsg" hidden></span></div>'}
+function shrink(file){return new Promise(function(res,rej){var u=URL.createObjectURL(file),img=new Image();
+  img.onload=function(){var M=1600,w=img.naturalWidth,h=img.naturalHeight,k=Math.min(1,M/Math.max(w,h)),c=document.createElement('canvas');
+    c.width=Math.round(w*k);c.height=Math.round(h*k);var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(img,0,0,c.width,c.height);
+    URL.revokeObjectURL(u);c.toBlob(function(b){b?res(b):rej()},'image/jpeg',0.85)};
+  img.onerror=function(){URL.revokeObjectURL(u);rej()};img.src=u})}
+function setPoster(up,id){
+  if(up==='f'){if(id)form.o.poster=id;else delete form.o.poster;var b=$('#f-poster');if(b)b.outerHTML=posterBox(id,'f','f-poster');
+    if(id){var m=$('#f-poster .pmsg');m.hidden=false;m.className='pmsg ok';m.textContent='Poster added. Now press '+(form.i==null?'Add It':'Update It')+', then Save Changes.'}return}
+  var k=up.slice(2);if(!S.locs[k])return;if(id)S.locs[k].poster=id;else delete S.locs[k].poster;changed();render()}
+function uploadPoster(input){var f=input.files&&input.files[0],box=input.closest('.poster'),m=box.querySelector('.pmsg'),up=input.dataset.up;if(!f)return;
+  var say=function(t,c){m.hidden=false;m.className='pmsg'+(c?' '+c:'');m.textContent=t};
+  say('Adding the poster...');
+  shrink(f).catch(function(){throw 'read'}).then(function(blob){
+    return fetch('/api/poster',{method:'POST',credentials:'same-origin',headers:{'content-type':'image/jpeg'},body:blob}).then(function(r){return r.json().then(function(d){d._status=r.status;return d})})
+  }).then(function(d){
+    if(d._status===401){say('You have been logged out. Log in again, then add the poster.','bad');showLogin();return}
+    if(!d.ok)throw 0;setPoster(up,d.id)
+  }).catch(function(e){input.value='';say(e==='read'?'We could not read that photo. Try a JPG or PNG, or take a screenshot of the poster.':'That did not upload. Check your internet and try again.','bad')})}
+
 /* ---------- tabs ---------- */
 document.querySelectorAll('.tabs button').forEach(function(b){b.addEventListener('click',function(){
   document.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-selected',x===b)});
@@ -122,13 +158,13 @@ function renderDays(){
   S.events.forEach(function(e,i){if(e.date>=t)items.push({k:'e',i:i,d:e.date,o:e})});
   S.changes.forEach(function(c,i){if(c.date>=t)items.push({k:'c',i:i,d:c.date,o:c})});
   items.sort(function(a,b){return a.d<b.d?-1:a.d>b.d?1:0});
-  var h='<div class="card"><h2>Days Out &amp; Changes</h2><p class="help">Add a dog show, fair or pop-up. Or change a normal day, like an early finish or a day off. These show on the calendar on the website.</p>'+
+  var h='<div class="card"><h2>Days Out &amp; Changes</h2><p class="help">Add a dog show, fair or pop-up, with its poster if you have one. Or change a normal day, like an early finish or a day off. These show on the calendar on the website.</p>'+
     '<div style="display:flex;gap:10px;flex-wrap:wrap"><button type="button" class="btn" data-a="newE">+ Add A Day Out</button><button type="button" class="btn alt" data-a="newC">Change Or Close A Normal Day</button></div></div>';
   if(form)h+=form.k==='e'?eventForm():changeForm();
   h+='<div class="card"><h3>Coming up</h3>'+(items.length?items.map(function(it){var o=it.o,L=S.locs[o.loc]||{};
     var what=it.k==='e'?'<span class="tag out">Day out</span>'+esc(o.loc?L.name:o.name):'<span class="tag chg">'+(o.closed?'Closed':'New times')+'</span>'+esc(L.name);
     var when=it.k==='e'||!o.closed?t12(o.from||'')+(o.to?' to '+t12(o.to):''):'Not open this day';
-    return '<div class="item"><span class="sw" style="background:'+(L.col||'#B5476F')+'"></span><div class="what"><small>'+nice(o.date)+'</small><b>'+what+'</b><small>'+when+(o.note?' &middot; '+esc(o.note):'')+'</small></div>'+
+    return '<div class="item"><span class="sw" style="background:'+(L.col||'#B5476F')+'"></span>'+(o.poster?'<img class="pth" src="/api/poster/'+o.poster+'" alt="Poster">':'')+'<div class="what"><small>'+nice(o.date)+'</small><b>'+what+'</b><small>'+when+(o.note?' &middot; '+esc(o.note):'')+'</small></div>'+
       '<button type="button" class="link" data-a="edit" data-k="'+it.k+'" data-i="'+it.i+'">Edit</button><button type="button" class="link bad" data-a="del" data-k="'+it.k+'" data-i="'+it.i+'">Delete</button></div>'}).join(''):'<p class="empty">Nothing added yet.</p>')+'</div>';
   $('#tab-days').innerHTML=h;
 }
@@ -141,6 +177,7 @@ function eventForm(){var e=form.o,isNew=!e.loc;
   '<p class="help" style="margin-top:-4px">Put the postcode in the address and we will add a pin to the map.</p></div>'+
   '<div class="row r2"><label class="f"><span>From</span><input type="time" id="f-from" value="'+(e.from||'10:00')+'"></label><label class="f"><span>To</span><input type="time" id="f-to" value="'+(e.to||'16:00')+'"></label></div>'+
   '<label class="f"><span>Note (if you want one)</span><input id="f-note" value="'+esc(e.note)+'" placeholder="Stand 14, by the main ring"></label>'+
+  posterBox(e.poster,'f','f-poster')+
   '<p id="f-err" style="color:var(--bad);font-weight:700" hidden></p>'+
   '<div style="display:flex;gap:10px"><button type="button" class="btn" data-a="okE">'+(form.i==null?'Add It':'Update It')+'</button><button type="button" class="btn alt" data-a="cancel">Cancel</button></div></div>'}
 function changeForm(){var c=form.o;
@@ -157,6 +194,7 @@ function saveEvent(){
   var e={date:$('#f-date').value,from:$('#f-from').value,to:$('#f-to').value},loc=$('#f-loc').value,note=$('#f-note').value.trim();
   if(!e.date)return ferr('Pick a date.');if(!e.from||!e.to)return ferr('Put in the times.');
   if(note)e.note=note;
+  if(form.o.poster)e.poster=form.o.poster;
   var finish=function(){if(form.i==null)S.events.push(e);else S.events[form.i]=e;form=null;changed();render()};
   if(loc){e.loc=loc;return finish()}
   e.name=$('#f-name').value.trim();e.addr=$('#f-addr').value.trim();
@@ -209,6 +247,7 @@ function renderPlaces(){
     '<p class="pin '+(l.lat!=null?'ok':'no')+'">'+(l.lat!=null?'&#10003; On the map':'Not on the map yet. Add a postcode to the address.')+'</p>'+
     '<label class="f" style="margin-top:8px"><span>When you are there (shown on the website)</span><input data-p="'+k+'" data-f="regular" value="'+esc(l.regular)+'" placeholder="Every Wednesday, 9am to 3pm."></label>'+
     '<label class="f"><span>Extra note (if you want one)</span><input data-p="'+k+'" data-f="note" value="'+esc(l.note)+'" placeholder="No harness fittings here."></label>'+
+    posterBox(l.poster,'p:'+k)+'<p class="help" style="margin-top:-8px">The poster shows on the website on every day you are here.</p>'+
     '<div class="f" style="font-weight:700;font-size:.95rem">Colour</div><div class="cols">'+COLS.map(function(c){return '<label style="background:'+c+'"><input type="radio" name="col-'+k+'" value="'+c+'" data-p="'+k+'" data-f="col"'+(c.toLowerCase()===String(l.col).toLowerCase()?' checked':'')+' aria-label="Colour '+c+'"></label>'}).join('')+'</div>'+
     '<div style="margin-top:10px"><button type="button" class="link bad" data-a="pdel" data-k="'+k+'">Delete this place</button></div></div>'});
   $('#tab-places').innerHTML=h;
@@ -228,6 +267,7 @@ document.addEventListener('click',function(ev){var b=ev.target.closest('[data-a]
   if(a==='cancel'){form=null;render()}
   if(a==='del'&&confirm('Delete this?')){(b.dataset.k==='e'?S.events:S.changes).splice(i,1);changed();render()}
   if(a==='okE')saveEvent();
+  if(a==='prm'&&confirm('Remove this poster?'))setPoster(b.dataset.up,null);
   if(a==='okC')saveChange();
   if(a==='wadd'){var d=b.dataset.d;(S.weekly[d]=S.weekly[d]||[]).push([order()[0],'09:00','15:00']);changed();render()}
   if(a==='wdel'){S.weekly[b.dataset.d].splice(i,1);changed();render()}
@@ -244,6 +284,7 @@ document.addEventListener('click',function(ev){var b=ev.target.closest('[data-a]
 
 /* ---------- typing in the forms ---------- */
 document.addEventListener('change',function(ev){var t=ev.target,d=t.dataset;
+  if(d.up!=null&&t.type==='file')return uploadPoster(t);
   if(t.id==='f-loc'&&$('#f-new'))$('#f-new').hidden=!!t.value;
   if(t.id==='f-closed')$('#f-times').hidden=t.checked;
   if(d.w!=null){var v=t.value;if(d.f!=='0'&&!v)return;S.weekly[d.w][+d.i][+d.f]=v;changed()}
